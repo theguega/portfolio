@@ -46,7 +46,7 @@
             image-rendering: -moz-crisp-edges;
             image-rendering: -webkit-optimize-contrast;
             image-rendering: crisp-edges;
-            image-rendering: pixelated; 
+            image-rendering: pixelated;
             border: 2px solid var(--card-bg);
             background: #0a0a0c;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 215, 0, 0.15);
@@ -186,7 +186,7 @@
             align-items: center;
             justify-content: space-between;
             font-weight: bold;
-            list-style: none; 
+            list-style: none;
             user-select: none;
         }
 
@@ -300,7 +300,7 @@
 
         <section id="projects">
             <h2>Projects</h2>
-            
+
             <details>
                 <summary>
                     <div class="project-title-area">
@@ -330,19 +330,19 @@
     <script>
         const canvas = document.getElementById('robotCanvas');
         const ctx = canvas.getContext('2d');
-        
+
         ctx.imageSmoothingEnabled = false;
 
-        const BASE_X = 24;  
-        const BASE_Y = 112; 
-        const L1 = 40; 
-        const L2 = 36; 
-        
+        const BASE_X = 24;
+        const BASE_Y = 112;
+        const L1 = 40;
+        const L2 = 36;
+
         const C_BG = '#0a0a0c';
         const C_GRID = '#151518';
-        const C_ARM_HL = '#FFE347'; 
-        const C_ARM = '#E6BC00';    
-        const C_ARM_SH = '#B39100'; 
+        const C_ARM_HL = '#FFE347';
+        const C_ARM = '#E6BC00';
+        const C_ARM_SH = '#B39100';
         const C_JOINT = '#E0E0E0';
         const C_BASE_1 = '#2A2A2E';
         const C_BASE_2 = '#1A1A1D';
@@ -350,8 +350,8 @@
         const C_BLOCK = '#E74C3C';
         const C_BLOCK_SH = '#C0392B';
         const C_FLOOR = '#111115';
-        const C_VLA_TEXT = '#00FF41'; 
-        
+        const C_VLA_TEXT = '#00FF41';
+
         let time = 0;
         let instructionText = "> SYS_INIT";
 
@@ -364,7 +364,7 @@
             ctx.lineWidth = 6;
             ctx.lineCap = 'round';
             ctx.beginPath(); ctx.moveTo(x1, y1+1); ctx.lineTo(x2, y2+1); ctx.stroke();
-            
+
             ctx.strokeStyle = C_ARM;
             ctx.lineWidth = 5;
             ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
@@ -387,26 +387,26 @@
             let dx = targetX - BASE_X;
             let dy = targetY - BASE_Y;
             let dist = Math.sqrt(dx*dx + dy*dy);
-            
+
             if (dist > L1 + L2 - 0.1) {
                 let ratio = (L1 + L2 - 0.1) / dist;
                 dx *= ratio;
                 dy *= ratio;
                 dist = L1 + L2 - 0.1;
             }
-            
+
             let cosT2 = (dist*dist - L1*L1 - L2*L2) / (2 * L1 * L2);
             cosT2 = Math.max(-1, Math.min(1, cosT2));
-            
-            let theta2 = Math.acos(cosT2); 
+
+            let theta2 = Math.acos(cosT2);
             let theta1 = Math.atan2(dy, dx) - Math.atan2(L2 * Math.sin(theta2), L1 + L2 * Math.cos(theta2));
-            
+
             let j1x = BASE_X + L1 * Math.cos(theta1);
             let j1y = BASE_Y + L1 * Math.sin(theta1);
-            
+
             let j2x = j1x + L2 * Math.cos(theta1 + theta2);
             let j2y = j1y + L2 * Math.sin(theta1 + theta2);
-            
+
             return { j1x, j1y, j2x, j2y, theta1, theta2 };
         }
 
@@ -419,116 +419,116 @@
                 ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, 128); ctx.stroke();
                 ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(128, i); ctx.stroke();
             }
-            
+
             ctx.fillStyle = C_FLOOR;
-            ctx.fillRect(0, 114, 128, 14); 
-            
+            ctx.fillRect(0, 114, 128, 14);
+
             ctx.strokeStyle = '#333';
             ctx.setLineDash([2, 2]);
             ctx.strokeRect(41, 104, 14, 10);
             ctx.setLineDash([]);
 
             let cycle = t % 500;
-            let targetX = 56, targetY = 60; 
-            let clawOpen = 1; 
+            let targetX = 56, targetY = 60;
+            let clawOpen = 1;
             let blockX = 91, blockY = 106;
             let holding = false;
-            
+
             const pIdle = {x: 56, y: 60};
             const pAboveBlock = {x: 96, y: 70};
-            const pBlock = {x: 96, y: 96};  
+            const pBlock = {x: 96, y: 96};
             const pAboveDrop = {x: 48, y: 70};
             const pDrop = {x: 48, y: 96};
 
-            if (cycle < 40) { 
+            if (cycle < 40) {
                 targetX = pIdle.x; targetY = pIdle.y;
                 instructionText = "> OBS: DETECTING SCENE...";
-            } 
-            else if (cycle < 90) { 
+            }
+            else if (cycle < 90) {
                 let p = easeInOutCubic((cycle - 40) / 50);
                 targetX = pIdle.x + (pAboveBlock.x - pIdle.x) * p;
                 targetY = pIdle.y + (pAboveBlock.y - pIdle.y) * p;
                 instructionText = "> ACT: TARGET RED_BLOCK";
-            } 
-            else if (cycle < 120) { 
+            }
+            else if (cycle < 120) {
                 let p = easeInOutCubic((cycle - 90) / 30);
                 targetX = pAboveBlock.x;
                 targetY = pAboveBlock.y + (pBlock.y - pAboveBlock.y) * p;
                 instructionText = "> ACT: ALIGNING END-EFFECTOR";
-            } 
-            else if (cycle < 140) { 
+            }
+            else if (cycle < 140) {
                 targetX = pBlock.x; targetY = pBlock.y;
                 clawOpen = 1 - (cycle - 120) / 20;
                 instructionText = "> ACT: GRASP";
-            } 
-            else if (cycle < 180) { 
+            }
+            else if (cycle < 180) {
                 holding = true; clawOpen = 0;
                 let p = easeInOutCubic((cycle - 140) / 40);
                 targetX = pBlock.x + (pAboveBlock.x - pBlock.x) * p;
                 targetY = pBlock.y + (pAboveBlock.y - pBlock.y) * p;
                 instructionText = "> ACT: LIFT OBJECT";
-            } 
-            else if (cycle < 250) { 
+            }
+            else if (cycle < 250) {
                 holding = true; clawOpen = 0;
                 let p = easeInOutCubic((cycle - 180) / 70);
                 targetX = pAboveBlock.x + (pAboveDrop.x - pAboveBlock.x) * p;
                 targetY = pAboveBlock.y + (pAboveDrop.y - pAboveBlock.y) * p;
                 instructionText = "> VLA: NAVIGATE TO ZONE_A";
-            } 
-            else if (cycle < 280) { 
+            }
+            else if (cycle < 280) {
                 holding = true; clawOpen = 0;
                 let p = easeInOutCubic((cycle - 250) / 30);
                 targetX = pAboveDrop.x;
                 targetY = pAboveDrop.y + (pDrop.y - pAboveDrop.y) * p;
                 instructionText = "> ACT: LOWER PAYLOAD";
-            } 
-            else if (cycle < 300) { 
+            }
+            else if (cycle < 300) {
                 targetX = pDrop.x; targetY = pDrop.y;
                 holding = false;
                 blockX = pDrop.x - 5;
                 clawOpen = (cycle - 280) / 20;
                 instructionText = "> ACT: RELEASE";
-            } 
-            else if (cycle < 340) { 
+            }
+            else if (cycle < 340) {
                 targetX = pAboveDrop.x;
                 let p = easeInOutCubic((cycle - 300) / 40);
                 targetY = pDrop.y + (pAboveDrop.y - pDrop.y) * p;
-                blockX = pDrop.x - 5; 
+                blockX = pDrop.x - 5;
                 instructionText = "> SYS: TASK_SUCCESS";
-            } 
-            else if (cycle < 400) { 
+            }
+            else if (cycle < 400) {
                 let p = easeInOutCubic((cycle - 340) / 60);
                 targetX = pAboveDrop.x + (pIdle.x - pAboveDrop.x) * p;
                 targetY = pAboveDrop.y + (pIdle.y - pAboveDrop.y) * p;
                 blockX = pDrop.x - 5;
-                if (cycle > 390) blockX = -999; 
+                if (cycle > 390) blockX = -999;
                 instructionText = "> SYS: RETURNING TO HOME";
-            } 
-            else { 
+            }
+            else {
                 targetX = pIdle.x; targetY = pIdle.y;
-                if (cycle > 450) blockX = pBlock.x - 5; 
+                if (cycle > 450) blockX = pBlock.x - 5;
                 else blockX = -999;
                 instructionText = "> SYS: STANDBY";
             }
 
             if (!holding && blockX > 0) {
                 ctx.fillStyle = 'rgba(0,0,0,0.6)';
-                ctx.fillRect(blockX, blockY + 8, 10, 2); 
-                
+                ctx.fillRect(blockX, blockY + 8, 10, 2);
+
                 ctx.fillStyle = C_BLOCK;
                 ctx.fillRect(blockX, blockY-2, 10, 10);
                 ctx.fillStyle = C_BLOCK_HL;
-                ctx.fillRect(blockX, blockY-2, 10, 2); 
-                ctx.fillRect(blockX, blockY, 2, 8);   
+                ctx.fillRect(blockX, blockY-2, 10, 2);
+                ctx.fillRect(blockX, blockY, 2, 8);
                 ctx.fillStyle = C_BLOCK_SH;
-                ctx.fillRect(blockX+8, blockY, 2, 8); 
+                ctx.fillRect(blockX+8, blockY, 2, 8);
             }
 
             let pose = solveIK(targetX, targetY);
 
             ctx.fillStyle = 'rgba(0,0,0,0.8)';
             ctx.fillRect(BASE_X - 16, BASE_Y + 2, 32, 4);
-            
+
             ctx.fillStyle = C_BASE_1;
             ctx.beginPath();
             ctx.moveTo(BASE_X - 14, BASE_Y + 4);
@@ -536,10 +536,10 @@
             ctx.lineTo(BASE_X + 10, BASE_Y - 4);
             ctx.lineTo(BASE_X - 10, BASE_Y - 4);
             ctx.fill();
-            
+
             ctx.fillStyle = C_BASE_2;
             ctx.fillRect(BASE_X - 8, BASE_Y - 10, 16, 8);
-            
+
             if (Math.floor(time / 15) % 2 === 0 || cycle > 300) {
                 ctx.fillStyle = '#00FF00';
             } else {
@@ -549,19 +549,19 @@
 
             drawSegment(BASE_X, BASE_Y - 6, pose.j1x, pose.j1y);
             drawSegment(pose.j1x, pose.j1y, pose.j2x, pose.j2y);
-            
+
             drawJoint(BASE_X, BASE_Y - 6, 8);
             drawJoint(pose.j1x, pose.j1y, 6);
 
             let cx = pose.j2x;
             let cy = pose.j2y;
-            
-            let clawAngle = Math.PI / 2; 
+
+            let clawAngle = Math.PI / 2;
 
             ctx.save();
             ctx.translate(cx, cy);
-            ctx.rotate(clawAngle - Math.PI / 2); 
-            
+            ctx.rotate(clawAngle - Math.PI / 2);
+
             ctx.fillStyle = C_BASE_1;
             ctx.fillRect(-3, -3, 6, 6);
             ctx.fillStyle = C_JOINT;
@@ -569,18 +569,18 @@
 
             ctx.fillStyle = C_BASE_2;
             ctx.fillRect(-6, 2, 12, 4);
-            
+
             let openAmt = clawOpen * 4;
             ctx.fillStyle = C_ARM;
             ctx.fillRect(-6 - openAmt, 6, 3, 6);
             ctx.fillStyle = C_ARM_SH;
-            ctx.fillRect(-4 - openAmt, 6, 1, 6); 
-            
+            ctx.fillRect(-4 - openAmt, 6, 1, 6);
+
             ctx.fillStyle = C_ARM;
             ctx.fillRect(3 + openAmt, 6, 3, 6);
             ctx.fillStyle = C_ARM_SH;
-            ctx.fillRect(3 + openAmt, 6, 1, 6); 
-            
+            ctx.fillRect(3 + openAmt, 6, 1, 6);
+
             if (holding) {
                 ctx.fillStyle = C_BLOCK;
                 ctx.fillRect(-5, 8, 10, 10);
@@ -593,7 +593,7 @@
             ctx.restore();
 
             ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-            ctx.fillRect(0, 0, 128, 14); 
+            ctx.fillRect(0, 0, 128, 14);
             ctx.fillStyle = C_VLA_TEXT;
             ctx.font = '8px "Courier New", monospace';
             ctx.fillText(instructionText, 4, 10);
